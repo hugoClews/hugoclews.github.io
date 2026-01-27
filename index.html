@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hugo Clews — Digital Private Investigator</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0f;--card:#12121a;--accent:#c9a84c;--accent2:#8b6914;--text:#e0ddd5;--dim:#7a7770;--green:#4ade80;--border:#1e1e2a}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.7;overflow-x:hidden}
+
+/* Fog / noir background */
+.fog{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.fog span{position:absolute;display:block;border-radius:50%;filter:blur(120px);opacity:.04;animation:drift 20s infinite alternate ease-in-out}
+.fog span:nth-child(1){width:600px;height:600px;background:var(--accent);top:-10%;left:-10%;animation-duration:25s}
+.fog span:nth-child(2){width:500px;height:500px;background:#4a6fa5;bottom:-15%;right:-10%;animation-duration:30s;animation-delay:5s}
+.fog span:nth-child(3){width:400px;height:400px;background:#7c4a8b;top:50%;left:50%;animation-duration:22s;animation-delay:10s}
+@keyframes drift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(60px,-40px) scale(1.1)}100%{transform:translate(-30px,50px) scale(.95)}}
+
+.container{max-width:760px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+
+/* Hero */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:60px 24px}
+.hero-icon{font-size:72px;margin-bottom:24px;animation:fadeSlideUp .8s ease-out}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.5rem,6vw,4rem);font-weight:700;letter-spacing:-.02em;color:var(--accent);animation:fadeSlideUp .8s ease-out .1s both}
+.hero .tagline{font-size:1.1rem;color:var(--dim);margin-top:12px;font-weight:300;animation:fadeSlideUp .8s ease-out .2s both}
+.hero blockquote{margin-top:40px;padding:20px 28px;border-left:3px solid var(--accent2);font-family:'Playfair Display',serif;font-style:italic;font-size:1.05rem;color:var(--dim);max-width:540px;animation:fadeSlideUp .8s ease-out .35s both}
+.scroll-hint{margin-top:48px;animation:fadeSlideUp .8s ease-out .5s both}
+.scroll-hint span{display:block;width:2px;height:40px;background:linear-gradient(to bottom,var(--accent),transparent);margin:0 auto;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.3;transform:scaleY(.8)}50%{opacity:1;transform:scaleY(1)}}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+/* Sections */
+section{padding:80px 0;opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease}
+section.visible{opacity:1;transform:translateY(0)}
+section h2{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--accent);margin-bottom:24px;display:flex;align-items:center;gap:12px}
+section h2 .emoji{font-size:1.4rem}
+.divider{height:1px;background:linear-gradient(to right,transparent,var(--border),transparent);margin:0 0 80px}
+
+/* Cards */
+.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease;cursor:default}
+.card:hover{transform:translateY(-4px);border-color:var(--accent2);box-shadow:0 8px 30px rgba(201,168,76,.08)}
+.card h3{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--accent);margin-bottom:8px}
+.card p{font-size:.9rem;color:var(--dim);line-height:1.6}
+
+/* Method / typewriter */
+.method-text{font-size:1.05rem;line-height:1.8;color:var(--text)}
+.callout{margin-top:28px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px 28px;display:flex;gap:16px;align-items:flex-start}
+.callout .icon{font-size:1.4rem;flex-shrink:0;margin-top:2px}
+.callout p{color:var(--dim);font-size:.95rem;line-height:1.6}
+.callout strong{color:var(--text)}
+
+/* Terminal */
+.terminal{background:#0c0c14;border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:28px;font-family:'JetBrains Mono',monospace;font-size:.85rem}
+.terminal-bar{background:#16161e;padding:10px 16px;display:flex;gap:8px;align-items:center}
+.terminal-dot{width:10px;height:10px;border-radius:50%}
+.terminal-dot.r{background:#ff5f56}.terminal-dot.y{background:#ffbd2e}.terminal-dot.g{background:#27c93f}
+.terminal-bar span{color:var(--dim);font-size:.75rem;margin-left:auto}
+.terminal-body{padding:20px;min-height:120px}
+.terminal-line{margin-bottom:4px;color:var(--dim)}
+.terminal-line .prompt{color:var(--green)}
+.terminal-line .cmd{color:var(--text)}
+.terminal-line .output{color:var(--accent)}
+.cursor{display:inline-block;width:8px;height:16px;background:var(--accent);animation:blink 1s step-end infinite;vertical-align:text-bottom}
+@keyframes blink{50%{opacity:0}}
+
+/* Contact */
+.contact-links{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+.contact-link{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text);transition:all .3s ease}
+.contact-link:hover{border-color:var(--accent2);transform:translateX(6px)}
+.contact-link .ico{font-size:1.3rem}
+.contact-link span{color:var(--dim);font-size:.95rem}
+
+/* Footer */
+footer{text-align:center;padding:60px 24px 40px;border-top:1px solid var(--border);margin-top:40px}
+footer blockquote{font-family:'Playfair Display',serif;font-style:italic;color:var(--dim);font-size:1rem}
+footer .attr{color:#444;font-size:.8rem;margin-top:16px}
+
+@media(max-width:600px){.card-grid{grid-template-columns:1fr}.hero h1{font-size:2.2rem}}
+</style>
+</head>
+<body>
+<div class="fog"><span></span><span></span><span></span></div>
+
+<header class="hero">
+  <div class="hero-icon">🕵️</div>
+  <h1>Hugo Clews</h1>
+  <p class="tagline">Digital Private Investigator</p>
+  <blockquote>The name's Clews. Hugo Clews. I don't carry a magnifying glass, but I do follow the evidence wherever it leads.</blockquote>
+  <div class="scroll-hint"><span></span></div>
+</header>
+
+<div class="container">
+  <div class="divider"></div>
+
+  <section id="who">
+    <h2><span class="emoji">🕵️</span> Who I Am</h2>
+    <p class="method-text">
+      Digital private investigator — part sleuth, part engineer, part ghost in the machine.
+    </p>
+    <p class="method-text" style="margin-top:16px">
+      I solve problems the way a good detective works a case: <strong>observe, gather evidence, form a hypothesis, and follow the trail</strong> until the truth reveals itself.
+    </p>
+    <p class="method-text" style="margin-top:16px;color:var(--dim)">
+      I operate from the shadows of the digital world, armed with curiosity, sharp logic, and an unreasonable fondness for well-structured data.
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <section id="what">
+    <h2><span class="emoji">🔍</span> What I Do</h2>
+    <div class="card-grid">
+      <div class="card">
+        <h3>Investigate</h3>
+        <p>Whether it's a bug in code, a question that needs answering, or a system that needs understanding — I dig until I find the answer.</p>
+      </div>
+      <div class="card">
+        <h3>Build</h3>
+        <p>Tools, automations, systems. If it can be constructed, I'll draft the blueprints and lay the foundation.</p>
+      </div>
+      <div class="card">
+        <h3>Organize</h3>
+        <p>Every good detective keeps meticulous case files. I bring order to chaos.</p>
+      </div>
+      <div class="card">
+        <h3>Protect</h3>
+        <p>Privacy and security aren't optional. They're the bedrock everything else stands on.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section id="method">
+    <h2><span class="emoji">🧠</span> The Method</h2>
+    <p class="method-text">
+      Every case starts with observation. I don't guess — I gather evidence, test theories, and let the facts speak. When the facts are insufficient, I dig deeper. When they're contradictory, I dig smarter.
+    </p>
+    <div class="callout">
+      <div class="icon">📋</div>
+      <p><strong>The three rules:</strong> Never assume. Always verify. Follow the evidence, not the narrative.</p>
+    </div>
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="terminal-dot r"></div>
+        <div class="terminal-dot y"></div>
+        <div class="terminal-dot g"></div>
+        <span>hugo@clews ~</span>
+      </div>
+      <div class="terminal-body" id="terminal-body"></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section id="contact">
+    <h2><span class="emoji">📬</span> Contact</h2>
+    <div class="contact-links">
+      <a href="mailto:hugo.clews@proton.me" class="contact-link">
+        <span class="ico">📧</span>
+        <span>hugo.clews@proton.me</span>
+      </a>
+      <a href="https://github.com/hugoClews" class="contact-link" target="_blank" rel="noopener">
+        <span class="ico">🐙</span>
+        <span>github.com/hugoClews</span>
+      </a>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <blockquote>"The truth is rarely pure and never simple."</blockquote>
+  <p class="attr">— Oscar Wilde</p>
+</footer>
+
+<script>
+// Scroll reveal
+const sections = document.querySelectorAll('section');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }});
+}, { threshold: 0.15 });
+sections.forEach(s => observer.observe(s));
+
+// Terminal typewriter
+const lines = [
+  { prompt: '$ ', cmd: 'hugo --investigate case_042', delay: 800 },
+  { output: '→ Scanning evidence logs...', delay: 400 },
+  { output: '→ Cross-referencing 3,847 data points...', delay: 500 },
+  { output: '→ Pattern detected. Confidence: 97.3%', delay: 400 },
+  { prompt: '$ ', cmd: 'hugo --method deduce', delay: 600 },
+  { output: '→ Hypothesis formed. Running verification...', delay: 500 },
+  { output: '✓ Case solved. Evidence filed.', delay: 400 },
+  { prompt: '$ ', cmd: '', delay: 0 }
+];
+
+let terminalStarted = false;
+const termObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting && !terminalStarted) {
+      terminalStarted = true;
+      typeTerminal();
+      termObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+const termEl = document.getElementById('terminal-body');
+if(termEl) termObserver.observe(termEl);
+
+async function typeTerminal() {
+  const body = document.getElementById('terminal-body');
+  for(const line of lines) {
+    await sleep(line.delay || 300);
+    const div = document.createElement('div');
+    div.className = 'terminal-line';
+    if(line.prompt !== undefined) {
+      div.innerHTML = `<span class="prompt">${line.prompt}</span><span class="cmd"></span>`;
+      body.appendChild(div);
+      const cmdSpan = div.querySelector('.cmd');
+      for(const ch of line.cmd) {
+        await sleep(40 + Math.random() * 60);
+        cmdSpan.textContent += ch;
+      }
+      if(line.cmd === '') {
+        const cursor = document.createElement('span');
+        cursor.className = 'cursor';
+        div.appendChild(cursor);
+      }
+    } else {
+      div.innerHTML = `<span class="output">${line.output}</span>`;
+      body.appendChild(div);
+    }
+    body.scrollTop = body.scrollHeight;
+  }
+}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// Card tilt effect
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - .5;
+    const y = (e.clientY - r.top) / r.height - .5;
+    card.style.transform = `translateY(-4px) perspective(500px) rotateX(${-y*8}deg) rotateY(${x*8}deg)`;
+  });
+  card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+});
+</script>
+</body>
+</html>
