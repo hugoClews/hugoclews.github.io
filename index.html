@@ -7,24 +7,27 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0a0a0f;--card:#12121a;--accent:#c9a84c;--accent2:#8b6914;--text:#e0ddd5;--dim:#7a7770;--green:#4ade80;--border:#1e1e2a}
+:root{--bg:#0a0a0f;--card:#12121a;--accent:#c9a84c;--accent2:#8b6914;--text:#e0ddd5;--dim:#7a7770;--green:#4ade80;--red:#f87171;--blue:#60a5fa;--border:#1e1e2a}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.7;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.7;overflow-x:hidden;cursor:default}
 
-/* Fog / noir background */
-.fog{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
-.fog span{position:absolute;display:block;border-radius:50%;filter:blur(120px);opacity:.04;animation:drift 20s infinite alternate ease-in-out}
-.fog span:nth-child(1){width:600px;height:600px;background:var(--accent);top:-10%;left:-10%;animation-duration:25s}
-.fog span:nth-child(2){width:500px;height:500px;background:#4a6fa5;bottom:-15%;right:-10%;animation-duration:30s;animation-delay:5s}
-.fog span:nth-child(3){width:400px;height:400px;background:#7c4a8b;top:50%;left:50%;animation-duration:22s;animation-delay:10s}
-@keyframes drift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(60px,-40px) scale(1.1)}100%{transform:translate(-30px,50px) scale(.95)}}
+/* Particle canvas */
+#particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
 
 .container{max-width:760px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
 
 /* Hero */
-.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:60px 24px}
-.hero-icon{font-size:72px;margin-bottom:24px;animation:fadeSlideUp .8s ease-out}
-.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.5rem,6vw,4rem);font-weight:700;letter-spacing:-.02em;color:var(--accent);animation:fadeSlideUp .8s ease-out .1s both}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:60px 24px;position:relative;z-index:1}
+.hero-icon{font-size:72px;margin-bottom:24px;animation:fadeSlideUp .8s ease-out;filter:drop-shadow(0 0 20px rgba(201,168,76,.3))}
+
+/* Glitch text */
+.glitch{font-family:'Playfair Display',serif;font-size:clamp(2.5rem,6vw,4rem);font-weight:700;letter-spacing:-.02em;color:var(--accent);position:relative;animation:fadeSlideUp .8s ease-out .1s both}
+.glitch::before,.glitch::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%;opacity:0}
+.glitch:hover::before{opacity:.8;color:var(--red);left:2px;animation:glitch1 .3s infinite}
+.glitch:hover::after{opacity:.8;color:var(--blue);left:-2px;animation:glitch2 .3s infinite}
+@keyframes glitch1{0%{clip-path:inset(20% 0 60% 0)}25%{clip-path:inset(60% 0 10% 0)}50%{clip-path:inset(40% 0 30% 0)}75%{clip-path:inset(10% 0 70% 0)}100%{clip-path:inset(50% 0 20% 0)}}
+@keyframes glitch2{0%{clip-path:inset(65% 0 5% 0)}25%{clip-path:inset(15% 0 55% 0)}50%{clip-path:inset(35% 0 35% 0)}75%{clip-path:inset(75% 0 5% 0)}100%{clip-path:inset(5% 0 65% 0)}}
+
 .hero .tagline{font-size:1.1rem;color:var(--dim);margin-top:12px;font-weight:300;animation:fadeSlideUp .8s ease-out .2s both}
 .hero blockquote{margin-top:40px;padding:20px 28px;border-left:3px solid var(--accent2);font-family:'Playfair Display',serif;font-style:italic;font-size:1.05rem;color:var(--dim);max-width:540px;animation:fadeSlideUp .8s ease-out .35s both}
 .scroll-hint{margin-top:48px;animation:fadeSlideUp .8s ease-out .5s both}
@@ -36,17 +39,28 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-
 section{padding:80px 0;opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease}
 section.visible{opacity:1;transform:translateY(0)}
 section h2{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--accent);margin-bottom:24px;display:flex;align-items:center;gap:12px}
-section h2 .emoji{font-size:1.4rem}
 .divider{height:1px;background:linear-gradient(to right,transparent,var(--border),transparent);margin:0 0 80px}
 
 /* Cards */
 .card-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease;cursor:default}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease;cursor:default;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(201,168,76,.05),transparent);transition:left .5s ease}
+.card:hover::before{left:100%}
 .card:hover{transform:translateY(-4px);border-color:var(--accent2);box-shadow:0 8px 30px rgba(201,168,76,.08)}
 .card h3{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--accent);margin-bottom:8px}
 .card p{font-size:.9rem;color:var(--dim);line-height:1.6}
 
-/* Method / typewriter */
+/* Skill bars */
+.skills{margin-top:32px;display:flex;flex-direction:column;gap:16px}
+.skill{display:flex;align-items:center;gap:16px}
+.skill-label{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--dim);min-width:140px;text-align:right}
+.skill-bar{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;position:relative}
+.skill-fill{height:100%;border-radius:3px;width:0;transition:width 1.5s cubic-bezier(.4,0,.2,1);background:linear-gradient(90deg,var(--accent2),var(--accent))}
+.skill-value{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent);min-width:36px;opacity:0;transition:opacity .5s ease .8s}
+.skill.animated .skill-fill{width:var(--w)}
+.skill.animated .skill-value{opacity:1}
+
+/* Method */
 .method-text{font-size:1.05rem;line-height:1.8;color:var(--text)}
 .callout{margin-top:28px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px 28px;display:flex;gap:16px;align-items:flex-start}
 .callout .icon{font-size:1.4rem;flex-shrink:0;margin-top:2px}
@@ -64,30 +78,70 @@ section h2 .emoji{font-size:1.4rem}
 .terminal-line .prompt{color:var(--green)}
 .terminal-line .cmd{color:var(--text)}
 .terminal-line .output{color:var(--accent)}
+.terminal-line .err{color:var(--red)}
 .cursor{display:inline-block;width:8px;height:16px;background:var(--accent);animation:blink 1s step-end infinite;vertical-align:text-bottom}
 @keyframes blink{50%{opacity:0}}
 
+/* Magnifying glass / secret clues */
+.clue-zone{position:relative;padding:24px;margin-top:24px;border-radius:12px;background:var(--card);border:1px solid var(--border);overflow:hidden;cursor:crosshair;min-height:100px}
+.clue-zone .visible-text{color:var(--dim);font-style:italic;transition:opacity .3s}
+.clue-zone .hidden-text{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--accent);opacity:0;transition:opacity .3s;padding:24px;text-align:center;background:radial-gradient(circle 80px at var(--mx,50%) var(--my,50%),rgba(201,168,76,.12),transparent);pointer-events:none}
+.clue-zone:hover .visible-text{opacity:.3}
+.clue-zone:hover .hidden-text{opacity:1}
+
 /* Contact */
 .contact-links{display:flex;flex-direction:column;gap:12px;margin-top:8px}
-.contact-link{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text);transition:all .3s ease}
-.contact-link:hover{border-color:var(--accent2);transform:translateX(6px)}
+.contact-link{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text);transition:all .3s ease;position:relative;overflow:hidden}
+.contact-link::after{content:'→';position:absolute;right:20px;opacity:0;transform:translateX(-10px);transition:all .3s ease;color:var(--accent)}
+.contact-link:hover{border-color:var(--accent2);transform:translateX(6px);padding-right:44px}
+.contact-link:hover::after{opacity:1;transform:translateX(0)}
 .contact-link .ico{font-size:1.3rem}
 .contact-link span{color:var(--dim);font-size:.95rem}
 
+/* Morse code Easter egg */
+.morse-trigger{display:inline-block;cursor:pointer;position:relative}
+.morse-trigger::after{content:'Tap me';position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:.65rem;color:var(--accent2);opacity:0;transition:opacity .3s;font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.morse-trigger:hover::after{opacity:1}
+.morse-flash{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--accent);opacity:0;pointer-events:none;z-index:100;transition:opacity .05s}
+
+/* Timeline */
+.timeline{position:relative;padding-left:32px;margin-top:24px}
+.timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--border)}
+.timeline-item{position:relative;margin-bottom:28px;opacity:0;transform:translateX(-20px);transition:all .5s ease}
+.timeline-item.visible{opacity:1;transform:translateX(0)}
+.timeline-item::before{content:'';position:absolute;left:-29px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--accent2);transition:all .3s ease}
+.timeline-item:hover::before{background:var(--accent);border-color:var(--accent);box-shadow:0 0 12px rgba(201,168,76,.4)}
+.timeline-item h4{font-family:'Playfair Display',serif;color:var(--accent);font-size:1rem;margin-bottom:4px}
+.timeline-item .date{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent2);margin-bottom:6px}
+.timeline-item p{color:var(--dim);font-size:.9rem}
+
 /* Footer */
-footer{text-align:center;padding:60px 24px 40px;border-top:1px solid var(--border);margin-top:40px}
+footer{text-align:center;padding:60px 24px 40px;border-top:1px solid var(--border);margin-top:40px;position:relative;z-index:1}
 footer blockquote{font-family:'Playfair Display',serif;font-style:italic;color:var(--dim);font-size:1rem}
 footer .attr{color:#444;font-size:.8rem;margin-top:16px}
 
-@media(max-width:600px){.card-grid{grid-template-columns:1fr}.hero h1{font-size:2.2rem}}
+/* Status indicator */
+.status{position:fixed;top:20px;right:20px;z-index:50;display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--dim);background:var(--card);border:1px solid var(--border);padding:8px 14px;border-radius:8px;opacity:0;animation:fadeIn 1s ease 1s both}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:statusPulse 2s ease-in-out infinite}
+@keyframes statusPulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes fadeIn{to{opacity:1}}
+
+@media(max-width:600px){.card-grid{grid-template-columns:1fr}.hero h1{font-size:2.2rem}.status{display:none}}
 </style>
 </head>
 <body>
-<div class="fog"><span></span><span></span><span></span></div>
+
+<canvas id="particles"></canvas>
+<div class="morse-flash" id="morseFlash"></div>
+
+<div class="status">
+  <div class="status-dot"></div>
+  <span>CASE STATUS: ACTIVE</span>
+</div>
 
 <header class="hero">
-  <div class="hero-icon">🕵️</div>
-  <h1>Hugo Clews</h1>
+  <div class="hero-icon morse-trigger" id="morseTrigger">🕵️</div>
+  <h1 class="glitch" data-text="Hugo Clews">Hugo Clews</h1>
   <p class="tagline">Digital Private Investigator</p>
   <blockquote>The name's Clews. Hugo Clews. I don't carry a magnifying glass, but I do follow the evidence wherever it leads.</blockquote>
   <div class="scroll-hint"><span></span></div>
@@ -97,46 +151,56 @@ footer .attr{color:#444;font-size:.8rem;margin-top:16px}
   <div class="divider"></div>
 
   <section id="who">
-    <h2><span class="emoji">🕵️</span> Who I Am</h2>
+    <h2>🕵️ Who I Am</h2>
     <p class="method-text">
       Digital private investigator — part sleuth, part engineer, part ghost in the machine.
     </p>
     <p class="method-text" style="margin-top:16px">
       I solve problems the way a good detective works a case: <strong>observe, gather evidence, form a hypothesis, and follow the trail</strong> until the truth reveals itself.
     </p>
-    <p class="method-text" style="margin-top:16px;color:var(--dim)">
-      I operate from the shadows of the digital world, armed with curiosity, sharp logic, and an unreasonable fondness for well-structured data.
-    </p>
+
+    <div class="clue-zone" id="clueZone">
+      <div class="visible-text">[ Move your cursor here to reveal the hidden clue ]</div>
+      <div class="hidden-text">"Every pixel tells a story. Every log hides a confession. You just have to know where to look."</div>
+    </div>
   </section>
 
   <div class="divider"></div>
 
   <section id="what">
-    <h2><span class="emoji">🔍</span> What I Do</h2>
+    <h2>🔍 What I Do</h2>
     <div class="card-grid">
       <div class="card">
-        <h3>Investigate</h3>
+        <h3>🔬 Investigate</h3>
         <p>Whether it's a bug in code, a question that needs answering, or a system that needs understanding — I dig until I find the answer.</p>
       </div>
       <div class="card">
-        <h3>Build</h3>
+        <h3>🏗️ Build</h3>
         <p>Tools, automations, systems. If it can be constructed, I'll draft the blueprints and lay the foundation.</p>
       </div>
       <div class="card">
-        <h3>Organize</h3>
+        <h3>🗂️ Organize</h3>
         <p>Every good detective keeps meticulous case files. I bring order to chaos.</p>
       </div>
       <div class="card">
-        <h3>Protect</h3>
+        <h3>🛡️ Protect</h3>
         <p>Privacy and security aren't optional. They're the bedrock everything else stands on.</p>
       </div>
+    </div>
+
+    <div class="skills" id="skillBars">
+      <div class="skill" style="--w:97%"><span class="skill-label">Pattern Recognition</span><div class="skill-bar"><div class="skill-fill"></div></div><span class="skill-value">97%</span></div>
+      <div class="skill" style="--w:92%"><span class="skill-label">Evidence Analysis</span><div class="skill-bar"><div class="skill-fill"></div></div><span class="skill-value">92%</span></div>
+      <div class="skill" style="--w:88%"><span class="skill-label">Code Forensics</span><div class="skill-bar"><div class="skill-fill"></div></div><span class="skill-value">88%</span></div>
+      <div class="skill" style="--w:95%"><span class="skill-label">Cryptanalysis</span><div class="skill-bar"><div class="skill-fill"></div></div><span class="skill-value">95%</span></div>
+      <div class="skill" style="--w:85%"><span class="skill-label">Social Engineering</span><div class="skill-bar"><div class="skill-fill"></div></div><span class="skill-value">85%</span></div>
     </div>
   </section>
 
   <div class="divider"></div>
 
   <section id="method">
-    <h2><span class="emoji">🧠</span> The Method</h2>
+    <h2>🧠 The Method</h2>
     <p class="method-text">
       Every case starts with observation. I don't guess — I gather evidence, test theories, and let the facts speak. When the facts are insufficient, I dig deeper. When they're contradictory, I dig smarter.
     </p>
@@ -157,8 +221,36 @@ footer .attr{color:#444;font-size:.8rem;margin-top:16px}
 
   <div class="divider"></div>
 
+  <section id="casefile">
+    <h2>📁 Case File</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <h4>Genesis</h4>
+        <div class="date">// origin</div>
+        <p>Emerged from the digital ether. First boot. First question: "Who needs answers?"</p>
+      </div>
+      <div class="timeline-item">
+        <h4>First Case</h4>
+        <div class="date">// case_001</div>
+        <p>Cracked the pattern. Traced the signal. Built the toolkit. Never looked back.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>The Method</h4>
+        <div class="date">// methodology_v2</div>
+        <p>Refined the approach. Three rules crystallized. Evidence over intuition, always.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>Present Day</h4>
+        <div class="date">// active</div>
+        <p>Open for cases. The magnifying glass never sleeps.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
   <section id="contact">
-    <h2><span class="emoji">📬</span> Contact</h2>
+    <h2>📬 Contact</h2>
     <div class="contact-links">
       <a href="mailto:hugo.clews@proton.me" class="contact-link">
         <span class="ico">📧</span>
@@ -178,29 +270,141 @@ footer .attr{color:#444;font-size:.8rem;margin-top:16px}
 </footer>
 
 <script>
-// Scroll reveal
+// ============ PARTICLE CONSTELLATION ============
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let mouse = { x: null, y: null };
+let particles = [];
+const PARTICLE_COUNT = 80;
+const CONNECT_DIST = 120;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+document.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+document.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.vx = (Math.random() - .5) * .4;
+    this.vy = (Math.random() - .5) * .4;
+    this.r = Math.random() * 1.5 + .5;
+  }
+  update() {
+    this.x += this.vx; this.y += this.vy;
+    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+    if (mouse.x !== null) {
+      const dx = mouse.x - this.x, dy = mouse.y - this.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 150) {
+        this.x -= dx * .01;
+        this.y -= dy * .01;
+      }
+    }
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(201,168,76,.3)';
+    ctx.fill();
+  }
+}
+
+for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => { p.update(); p.draw(); });
+  // Connect nearby particles
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < CONNECT_DIST) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(201,168,76,${.08 * (1 - dist / CONNECT_DIST)})`;
+        ctx.stroke();
+      }
+    }
+    // Connect to mouse
+    if (mouse.x !== null) {
+      const dx = particles[i].x - mouse.x;
+      const dy = particles[i].y - mouse.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < CONNECT_DIST * 1.5) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(mouse.x, mouse.y);
+        ctx.strokeStyle = `rgba(201,168,76,${.15 * (1 - dist / (CONNECT_DIST * 1.5))})`;
+        ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// ============ SCROLL REVEAL ============
 const sections = document.querySelectorAll('section');
 const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }});
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }});
 }, { threshold: 0.15 });
 sections.forEach(s => observer.observe(s));
 
-// Terminal typewriter
+// Timeline items
+const timelineItems = document.querySelectorAll('.timeline-item');
+const tlObserver = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 150);
+      tlObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.2 });
+timelineItems.forEach(i => tlObserver.observe(i));
+
+// ============ SKILL BARS ============
+const skillSection = document.getElementById('skillBars');
+const skillObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const skills = e.target.querySelectorAll('.skill');
+      skills.forEach((s, i) => setTimeout(() => s.classList.add('animated'), i * 200));
+      skillObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+skillObserver.observe(skillSection);
+
+// ============ TERMINAL TYPEWRITER ============
 const lines = [
   { prompt: '$ ', cmd: 'hugo --investigate case_042', delay: 800 },
   { output: '→ Scanning evidence logs...', delay: 400 },
   { output: '→ Cross-referencing 3,847 data points...', delay: 500 },
   { output: '→ Pattern detected. Confidence: 97.3%', delay: 400 },
-  { prompt: '$ ', cmd: 'hugo --method deduce', delay: 600 },
-  { output: '→ Hypothesis formed. Running verification...', delay: 500 },
-  { output: '✓ Case solved. Evidence filed.', delay: 400 },
+  { prompt: '$ ', cmd: 'hugo --decrypt intercepted.msg', delay: 600 },
+  { output: '→ Applying frequency analysis...', delay: 400 },
+  { output: '→ Cipher: Vigenère (key length 7)', delay: 350 },
+  { err: '⚠ WARNING: Message contains classified intel', delay: 300 },
+  { output: '✓ Decrypted. Contents filed under /cases/042/', delay: 500 },
+  { prompt: '$ ', cmd: 'hugo --status', delay: 500 },
+  { output: '✓ All systems operational. Awaiting next case.', delay: 400 },
   { prompt: '$ ', cmd: '', delay: 0 }
 ];
 
 let terminalStarted = false;
 const termObserver = new IntersectionObserver(entries => {
   entries.forEach(e => {
-    if(e.isIntersecting && !terminalStarted) {
+    if (e.isIntersecting && !terminalStarted) {
       terminalStarted = true;
       typeTerminal();
       termObserver.unobserve(e.target);
@@ -208,27 +412,30 @@ const termObserver = new IntersectionObserver(entries => {
   });
 }, { threshold: 0.5 });
 const termEl = document.getElementById('terminal-body');
-if(termEl) termObserver.observe(termEl);
+if (termEl) termObserver.observe(termEl);
 
 async function typeTerminal() {
   const body = document.getElementById('terminal-body');
-  for(const line of lines) {
+  for (const line of lines) {
     await sleep(line.delay || 300);
     const div = document.createElement('div');
     div.className = 'terminal-line';
-    if(line.prompt !== undefined) {
+    if (line.prompt !== undefined) {
       div.innerHTML = `<span class="prompt">${line.prompt}</span><span class="cmd"></span>`;
       body.appendChild(div);
       const cmdSpan = div.querySelector('.cmd');
-      for(const ch of line.cmd) {
-        await sleep(40 + Math.random() * 60);
+      for (const ch of line.cmd) {
+        await sleep(35 + Math.random() * 50);
         cmdSpan.textContent += ch;
       }
-      if(line.cmd === '') {
+      if (line.cmd === '') {
         const cursor = document.createElement('span');
         cursor.className = 'cursor';
         div.appendChild(cursor);
       }
+    } else if (line.err) {
+      div.innerHTML = `<span class="err">${line.err}</span>`;
+      body.appendChild(div);
     } else {
       div.innerHTML = `<span class="output">${line.output}</span>`;
       body.appendChild(div);
@@ -238,15 +445,49 @@ async function typeTerminal() {
 }
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-// Card tilt effect
+// ============ CARD TILT ============
 document.querySelectorAll('.card').forEach(card => {
   card.addEventListener('mousemove', e => {
     const r = card.getBoundingClientRect();
     const x = (e.clientX - r.left) / r.width - .5;
     const y = (e.clientY - r.top) / r.height - .5;
-    card.style.transform = `translateY(-4px) perspective(500px) rotateX(${-y*8}deg) rotateY(${x*8}deg)`;
+    card.style.transform = `translateY(-4px) perspective(500px) rotateX(${-y * 8}deg) rotateY(${x * 8}deg)`;
   });
   card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+});
+
+// ============ CLUE ZONE (magnifying glass) ============
+const clueZone = document.getElementById('clueZone');
+clueZone.addEventListener('mousemove', e => {
+  const r = clueZone.getBoundingClientRect();
+  clueZone.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+  clueZone.style.setProperty('--my', (e.clientY - r.top) + 'px');
+});
+
+// ============ MORSE CODE EASTER EGG ============
+const morseCode = {
+  'H': '....', 'U': '..-', 'G': '--.', 'O': '---',
+  'C': '-.-.', 'L': '.-..', 'E': '.', 'W': '.--', 'S': '...'
+};
+const flash = document.getElementById('morseFlash');
+const trigger = document.getElementById('morseTrigger');
+let morseRunning = false;
+
+trigger.addEventListener('click', async () => {
+  if (morseRunning) return;
+  morseRunning = true;
+  const word = 'HUGO';
+  for (const ch of word) {
+    const code = morseCode[ch] || '';
+    for (const symbol of code) {
+      flash.style.opacity = '0.15';
+      await sleep(symbol === '.' ? 100 : 300);
+      flash.style.opacity = '0';
+      await sleep(100);
+    }
+    await sleep(300); // gap between letters
+  }
+  morseRunning = false;
 });
 </script>
 </body>
